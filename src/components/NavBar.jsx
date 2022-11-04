@@ -192,7 +192,7 @@ export default function NavBar(props){
             </MenuItem>
             :
             <MenuItem key='Login'>
-              <Typography onClick={handleLogin} textAlign="center">Login</Typography>
+              <Typography onClick={() => handleLogin()} textAlign="center">Login</Typography>
             </MenuItem>
             }
             </Menu>

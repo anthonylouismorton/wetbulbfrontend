@@ -6,6 +6,7 @@ export const ProgramContext = React.createContext();
 function UserProvider({children}){
   const [userProfile, setUserProfile] = useState({user: {nickName: ''}});
   const { user, isAuthenticated} = useAuth0();
+  console.log(user)
 
   const getTechs = async () => {
     // if(userProfile.user.nickName === ''){
