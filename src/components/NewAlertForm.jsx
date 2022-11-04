@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   TextField,
   Grid,
@@ -17,27 +17,44 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-
+import { ProgramContext } from '../context/program';
 import axios from 'axios'
 // import { Autocomplete } from '@react-google-maps/api';
 
-export default function Alerts() {
+export default function NewAlertForm(props) {
+  const user = useContext(ProgramContext);
+  const [radio, setRadio] = useState('all');
+  const [frequency, setfrequency] = useState('hourly');
   const defaultAlert = {
     address: '',
     emails: [''],
-    flag: 'all'
-    
+    flag: radio,
+    frequency: frequency
   }
-  const [alert, setalert] = useState(defaultAlert)
-  const [radio, setRadio] = useState('all')
+  const [alert, setalert] = useState(defaultAlert);
 
   const handleChange = (e) => {
     const {name, value} = e.target
-    setRadio(e.target.value)
-    setalert({
-      ...alert,
-      [name]: value
-    })
+    if(name === 'flag'){
+      setRadio(e.target.value)
+      setalert({
+        ...alert,
+        [name]: value
+      })
+    }
+    else if(name === 'frequency'){
+      setfrequency(e.target.value)
+      setalert({
+        ...alert,
+        [name]: value
+      })
+    }
+    else{
+      setalert({
+        ...alert,
+        [name]: value
+      })
+    }
   };
 
   const handleRemoveEmail = (index, flow) => {
@@ -70,9 +87,26 @@ export default function Alerts() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    console.log()
+    let refinedAddress = alert.address.replace(' ', '+')
+    let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`)
+    let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2)
+    let trimmedLon = parseFloat(latLonSearch.data[0].lon).toFixed(2)
+    let newAlert = {
+      lat: trimmedLat,
+      lon: trimmedLon,
+      flagCondition: alert.flag,
+      frequency: alert.frequency,
+      userId: parseInt(user.userProfile.userId)
+    }
+    let createdAlert = await axios.post(`${process.env.REACT_APP_DATABASE}/alert/${parseInt(user.userId)}`, newAlert);
+    let alertId = parseInt(createdAlert.data.alertId)
+    let alertEmails = await Promise.all(alert.emails.map(email => axios.post(`${process.env.REACT_APP_DATABASE}/alertEmail/${alertId}`, {alertId: alertId, alertEmail: email})));
+    console.log(createdAlert)
+    console.log(alertEmails)
+    props.setnewalert(false);
   };
-
-  console.log(alert.emails)
+  console.log(alert)
   return (
     <Box>
       <Typography>Setup Alerts</Typography>
@@ -94,6 +128,12 @@ export default function Alerts() {
                   <FormControlLabel value="red" control={<Radio />} label="Red Flag and higher (<88 degrees F)" />
                   <FormControlLabel value="black" control={<Radio />} label="Black Flag and higher (<90 degrees F)" />
                 </RadioGroup>
+              <FormLabel component="legend">Choose Alert Frequency</FormLabel>
+              <RadioGroup aria-label="Flag" name="frequency" value={frequency} onChange={handleChange}>
+                <FormControlLabel value="hourly" control={<Radio />} label="Hourly" />
+                <FormControlLabel value="2hours" control={<Radio />} label="Every 2 hours" />
+                <FormControlLabel value="4hours" control={<Radio />} label="Every 4 hours" />
+              </RadioGroup>
               <FormLabel component="legend">Email Distribution List</FormLabel>
               {alert.emails.map((flow,index) => 
               <Grid key = {index}>
