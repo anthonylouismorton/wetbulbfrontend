@@ -13,15 +13,15 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
-// import { ProgramContext } from '../context/program';
+import { ProgramContext } from '../context/program';
 const settings = ['Login','Logout'];
 
 export default function NavBar(props){
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated, loginWithRedirect } = useAuth0();
-  console.log(isAuthenticated)
-  // const user = useContext(ProgramContext);
+  const user = useContext(ProgramContext);
+  console.log(user)
 	const handleLogin = () => {
 		loginWithRedirect();
 	};
@@ -41,9 +41,9 @@ export default function NavBar(props){
 
   };
   const handleProfileClick = (setting) => {
-    // if(setting === 'Logout'){
-    //   logout({ returnTo: window.location.origin })
-    // }
+    if(setting === 'Logout'){
+      logout({ returnTo: window.location.origin })
+    }
   }
 
   return (
@@ -188,7 +188,7 @@ export default function NavBar(props){
             >
             {isAuthenticated ?
             <MenuItem key='Logout'>
-              <Typography onClick={() => handleProfileClick()} textAlign="center">Logout</Typography>
+              <Typography onClick={() => handleProfileClick('Logout')} textAlign="center">Logout</Typography>
             </MenuItem>
             :
             <MenuItem key='Login'>

@@ -4,22 +4,24 @@ import axios from 'axios';
 export const ProgramContext = React.createContext();
 
 function UserProvider({children}){
-  const [userProfile, setUserProfile] = useState({user: {nickName: ''}});
-  const { user, isAuthenticated} = useAuth0();
-  console.log(user)
+  const [userProfile, setUserProfile] = useState({});
+  const { user, isAuthenticated } = useAuth0();
 
-  const getTechs = async () => {
-    // if(userProfile.user.nickName === ''){
-    //   let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-    //   if(isAuthenticated){
-    //     let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
-    //     setUserProfile({...currentUser[0], user})
-    //   }
-    // }
+  const getUserProfile = async () => {
+    if(isAuthenticated){
+      let email = user.email
+      console.log(email)
+      const userinfo = await axios.get(`${process.env.REACT_APP_DATABASE}/user/${email}`);
+      console.log(email)
+      setUserProfile(userinfo.data)
+    }
+    else{
+      setUserProfile({})
+    }
   }
-  useEffect(()=> {
-    getTechs();
-  }, [isAuthenticated, user, userProfile]);
+  useEffect(() => {
+    getUserProfile();
+  }, [isAuthenticated]);
 
   let values = {
     userProfile
