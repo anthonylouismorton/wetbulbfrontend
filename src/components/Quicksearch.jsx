@@ -7,7 +7,7 @@ import {
   Button
 } from '@mui/material';
 import axios from 'axios'
-// import { Autocomplete } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 
 export default function QuickSearch() {
   const defaultInformation = {
@@ -63,15 +63,13 @@ export default function QuickSearch() {
       <Typography>Quick Search</Typography>
         <Grid>
           <form onSubmit={handleSubmit}>
-        {/* <form onSubmit={handleSubmit}>
-          <Autocomplete>
+          {/* <Autocomplete>
             <TextField
               placeholder="Address"
               value={address}
               onChange={handleChange}
             />
-          </Autocomplete>
-        </form> */}
+          </Autocomplete> */}
           <TextField
             placeholder="Address"
             value={address}
