@@ -60,7 +60,7 @@ export default function AlertList() {
                   </Tooltip>
                 </TableCell>
                 <TableCell align="center">
-                  <Tooltip>
+                  <Tooltip title="Edit Alert">
                     <IconButton>
                       <EditIcon/>
                     </IconButton>
