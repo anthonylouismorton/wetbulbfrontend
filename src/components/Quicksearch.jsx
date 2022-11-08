@@ -83,11 +83,11 @@ export default function QuickSearch() {
       <Typography>WGBT</Typography>
         <Grid>
           <TextField
-            value={`${information.wgbtInfo.directWGBT} \u00B0F`}
+            value={`${information.wgbtInfo.directWBGT} \u00B0F`}
             label={'Direct WGBT'}
           />
           <TextField
-            value={`${information.wgbtInfo.shadeWBGT} \u00B0F`}
+            value={`${information.wgbtInfo.shadedWBGT} \u00B0F`}
             label={'Shaded WGBT'}
           />
           <TextField
@@ -95,7 +95,7 @@ export default function QuickSearch() {
             label={'Heat Index'}
           />
           <TextField
-            value={`${information.wgbtInfo.csi} W/m^2`}
+            value={`${information.wgbtInfo.solarRadiance} W/m^2`}
             label={'Estimated Solar Radiance'}
           />
         </Grid>

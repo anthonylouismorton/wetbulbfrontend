@@ -153,7 +153,7 @@ export default function NavBar(props){
               About
             </Button>
           </Link>
-            {/* {isAuthenticated && */}
+            {isAuthenticated &&
             <Link to = '/Dashboard' style={{ textDecoration: 'none' }}>
               <Button
                 key={'Dashboard'}
@@ -162,7 +162,7 @@ export default function NavBar(props){
                 Dashboard
               </Button>
             </Link>
-            {/* } */}
+            }
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="My Account">
