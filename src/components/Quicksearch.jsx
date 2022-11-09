@@ -18,10 +18,10 @@ export default function QuickSearch() {
       windspeed:""
     },
     wgbtInfo: {
-      csi: '',
-      directWGBT: '',
+      solarRadiance: '',
+      directWBGT: '',
       heatIndex: '',
-      shadeWBGT: ''
+      shadedWBGT: ''
     }
   }
   const [address, setaddress] = useState('')
