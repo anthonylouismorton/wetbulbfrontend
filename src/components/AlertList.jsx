@@ -16,7 +16,7 @@ import { ProgramContext } from '../context/program';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function AlertList() {
+export default function AlertList(props) {
   const [alerts, setAlerts] = useState('')
   const user = useContext(ProgramContext);
   const getAlerts = async () => {
@@ -27,7 +27,7 @@ export default function AlertList() {
   }
   useEffect(() => {
     getAlerts();
-  },[])
+  },[props.newAlert])
   console.log(alerts)
   return (
       <TableContainer>

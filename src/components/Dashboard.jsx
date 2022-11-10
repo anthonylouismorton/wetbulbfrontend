@@ -14,8 +14,12 @@ export default function Dashboard() {
     {newalert &&
     <NewAlertForm setnewalert={setnewalert}/>
     }
-    <AlertList/>
+    {newalert === false &&
+    <>
+    <AlertList alert={alert}/>
     <AlertHistory/>
+    </>
+    }
     </>
   )
 }

@@ -83,20 +83,20 @@ export default function QuickSearch() {
       <Typography>WGBT</Typography>
         <Grid>
           <TextField
-            value={`${information.wgbtInfo.directWBGT} \u00B0F`}
-            label={'Direct WGBT'}
+            value={`${information.wgbtInfo.directWBGT}`}
+            label={'Direct WGBT (\u00B0F)'}
           />
           <TextField
-            value={`${information.wgbtInfo.shadedWBGT} \u00B0F`}
-            label={'Shaded WGBT'}
+            value={`${information.wgbtInfo.shadedWBGT}`}
+            label={'Shaded WGBT (\u00B0F)'}
           />
           <TextField
-            value={`${information.wgbtInfo.heatIndex} \u00B0F`}
-            label={'Heat Index'}
+            value={`${information.wgbtInfo.heatIndex}`}
+            label={'Heat Index (\u00B0F)'}
           />
           <TextField
-            value={`${information.wgbtInfo.solarRadiance} W/m^2`}
-            label={'Estimated Solar Radiance'}
+            value={`${information.wgbtInfo.solarRadiance}`}
+            label={'Estimated Solar Radiance (W/m)'}
           />
         </Grid>
     </Box>
@@ -104,20 +104,20 @@ export default function QuickSearch() {
       <Typography>Weather Information</Typography>
         <Grid>
           <TextField
-            value={`${information.weatherInfo.barometer} in/Hg`}
-            label={'Barometer'}
+            value={`${information.weatherInfo.barometer}`}
+            label={'Barometer (in/Hg)'}
           />
           <TextField
-            value={`${information.weatherInfo.humidity}%`}
-            label={'Humidity'}
+            value={`${information.weatherInfo.humidity}`}
+            label={'Humidity (%)'}
           />
           <TextField
-            value={`${information.weatherInfo.temperature} \u00B0F`}
-            label={'Dry Temp'}
+            value={`${information.weatherInfo.temperature}`}
+            label={'Dry Temp (\u00B0F)'}
           />
           <TextField
-            value={`${information.weatherInfo.windspeed} MPH`}
-            label={'Wind Speed'}
+            value={`${information.weatherInfo.windspeed}`}
+            label={'Wind Speed (MPH)'}
           />
         </Grid>
     </Box>
