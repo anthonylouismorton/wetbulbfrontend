@@ -94,6 +94,7 @@ export default function NewAlertForm(props) {
     let newAlert = {
       lat: trimmedLat,
       lon: trimmedLon,
+      location: alert.address,
       flagCondition: alert.flag,
       frequency: alert.frequency,
       userId: parseInt(user.userProfile.userId)

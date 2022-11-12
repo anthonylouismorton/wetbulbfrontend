@@ -1,15 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  TextField,
+  TextField, 
   Grid,
   Box,
   Typography,
-  Button
+  Button,
+  Autocomplete
 } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import parse from 'autosuggest-highlight/parse';
+import throttle from 'lodash/throttle';
 import axios from 'axios'
-import { Autocomplete } from '@react-google-maps/api';
+import Quickresults from './Quickresults'
 
-export default function QuickSearch() {
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
+}
+
+const autocompleteService = { current: null };
+
+export default function QuickSearch() { 
+  const [value, setValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [options, setOptions] = useState([]);
+  const loaded = useRef(false);
+  if (typeof window !== 'undefined' && !loaded.current) {
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_API_KEY}&libraries=places`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+
+    loaded.current = true;
+  }
+  const fetch = useMemo(
+    () =>
+      throttle((request, callback) => {
+        autocompleteService.current.getPlacePredictions(request, callback);
+      }, 200),
+    [],
+  );
   const defaultInformation = {
     weatherInfo: {
       barometer: "",
@@ -24,12 +64,12 @@ export default function QuickSearch() {
       shadedWBGT: ''
     }
   }
-  const [address, setaddress] = useState('')
   const [coords, setcoords] = useState({})
   const [information, setInformation] = useState(defaultInformation)
   const handleSubmit = async (e) => {
     e.preventDefault()
-    let refinedAddress = address.replace(' ', '+')
+    console.log(value)
+    let refinedAddress = value.description.replace(' ', '+')
     let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`)
     console.log(latLonSearch)
     let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2)
@@ -49,78 +89,108 @@ export default function QuickSearch() {
     }
   }
 
-  const handleChange = (e) => {
-    setaddress(e.target.value)
-  }
-
   useEffect(() => {
+    let active = true;
 
-  },[information])
+    if (!autocompleteService.current && window.google) {
+      autocompleteService.current =
+        new window.google.maps.places.AutocompleteService();
+    }
+    if (!autocompleteService.current) {
+      return undefined;
+    }
 
+    if (inputValue === '') {
+      setOptions(value ? [value] : []);
+      return undefined;
+    }
+
+    fetch({ input: inputValue }, (results) => {
+      if (active) {
+        let newOptions = [];
+
+        if (value) {
+          newOptions = [value];
+        }
+
+        if (results) {
+          newOptions = [...newOptions, ...results];
+        }
+
+        setOptions(newOptions);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  },[value, inputValue, fetch])
+  console.log(value, inputValue)
   return (
-    <>
     <Box>
-      <Typography>Quick Search</Typography>
-        <Grid>
-          <form onSubmit={handleSubmit}>
-          {/* <Autocomplete>
-            <TextField
-              placeholder="Address"
-              value={address}
-              onChange={handleChange}
-            />
-          </Autocomplete> */}
-          <TextField
-            placeholder="Address"
-            value={address}
-            onChange={handleChange}
-          />
-          <Button type="submit" variant='contained'>Submit</Button>
-          </form>
-        </Grid>
+      <form onSubmit={handleSubmit}>
+        <Autocomplete
+          id="google-map-demo"
+          sx={{ width: 300 }}
+          getOptionLabel={(option) =>
+            typeof option === 'string' ? option : option.description
+          }
+          filterOptions={(x) => x}
+          options={options}
+          autoComplete
+          includeInputInList
+          filterSelectedOptions
+          value={value}
+          onChange={(event, newValue) => {
+            setOptions(newValue ? [newValue, ...options] : options);
+            setValue(newValue);
+          }}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Add a location" fullWidth />
+          )}
+          renderOption={(props, option) => {
+            const matches = option.structured_formatting.main_text_matched_substrings;
+            const parts = parse(
+              option.structured_formatting.main_text,
+              matches.map((match) => [match.offset, match.offset + match.length]),
+            );
+
+            return (
+              <li {...props}>
+                <Grid container alignItems="center">
+                  <Grid item>
+                    <Box
+                      component={LocationOnIcon}
+                      sx={{ color: 'text.secondary', mr: 2 }}
+                    />
+                  </Grid>
+                  <Grid item xs>
+                    {parts.map((part, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          fontWeight: part.highlight ? 700 : 400,
+                        }}
+                      >
+                        {part.text}
+                      </span>
+                    ))}
+
+                    <Typography variant="body2" color="text.secondary">
+                      {option.structured_formatting.secondary_text}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </li>
+            );
+          }}
+        />
+        <Button type="submit" variant='contained'>Submit</Button>
+      </form>
+        <Quickresults information={information}/>
     </Box>
-    <Box>
-      <Typography>WGBT</Typography>
-        <Grid>
-          <TextField
-            value={`${information.wgbtInfo.directWBGT}`}
-            label={'Direct WGBT (\u00B0F)'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.shadedWBGT}`}
-            label={'Shaded WGBT (\u00B0F)'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.heatIndex}`}
-            label={'Heat Index (\u00B0F)'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.solarRadiance}`}
-            label={'Estimated Solar Radiance (W/m)'}
-          />
-        </Grid>
-    </Box>
-    <Box>
-      <Typography>Weather Information</Typography>
-        <Grid>
-          <TextField
-            value={`${information.weatherInfo.barometer}`}
-            label={'Barometer (in/Hg)'}
-          />
-          <TextField
-            value={`${information.weatherInfo.humidity}`}
-            label={'Humidity (%)'}
-          />
-          <TextField
-            value={`${information.weatherInfo.temperature}`}
-            label={'Dry Temp (\u00B0F)'}
-          />
-          <TextField
-            value={`${information.weatherInfo.windspeed}`}
-            label={'Wind Speed (MPH)'}
-          />
-        </Grid>
-    </Box>
-  </>
   )
 }

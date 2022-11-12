@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from "@auth0/auth0-react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import ProgramProvider from './context/program';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,7 +21,9 @@ root.render(
     >
     {/* <Auth0ProviderWithHistory> */}
     <ProgramProvider>
-      <App />
+      <StyledEngineProvider>
+        <App />
+      </StyledEngineProvider>
     </ProgramProvider>
     {/* </Auth0ProviderWithHistory> */}
     </Auth0Provider>
