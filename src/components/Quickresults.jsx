@@ -5,7 +5,6 @@ import {
   Box,
   Typography
 } from '@mui/material';
-// import { Autocomplete } from '@react-google-maps/api';
 
 export default function Quickresults(props) {
   
