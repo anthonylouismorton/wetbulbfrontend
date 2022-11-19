@@ -87,7 +87,6 @@ export default function NewAlertForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log()
     let refinedAddress = alert.address.replace(' ', '+')
     let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`)
     let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2)
@@ -95,15 +94,14 @@ export default function NewAlertForm(props) {
     let newAlert = {
       lat: trimmedLat,
       lon: trimmedLon,
+      location: alert.address,
       flagCondition: alert.flag,
       frequency: alert.frequency,
       userId: parseInt(user.userProfile.userId)
     }
     let createdAlert = await axios.post(`${process.env.REACT_APP_DATABASE}/alert/${parseInt(user.userId)}`, newAlert);
     let alertId = parseInt(createdAlert.data.alertId)
-    let alertEmails = await Promise.all(alert.emails.map(email => axios.post(`${process.env.REACT_APP_DATABASE}/alertEmail/${alertId}`, {alertId: alertId, alertEmail: email})));
-    console.log(createdAlert)
-    console.log(alertEmails)
+    await Promise.all(alert.emails.map(email => axios.post(`${process.env.REACT_APP_DATABASE}/alertEmail/${alertId}`, {alertId: alertId, alertEmail: email})));
     props.setnewalert(false);
   };
   console.log(alert)
@@ -163,6 +161,7 @@ export default function NewAlertForm(props) {
             }
             </Grid>
           <Button type="submit" variant='contained'>Submit</Button>
+          <Button variant='contained' onClick={() => props.setnewalert(false)}>Cancel</Button>
         </form>
       </Grid>
     </Box>

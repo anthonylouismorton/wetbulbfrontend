@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   TableContainer,
-  Box,
   Table,
   TableHead,
   TableRow,
@@ -15,8 +14,9 @@ import axios from 'axios'
 import { ProgramContext } from '../context/program';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 
-export default function AlertList() {
+export default function AlertList(props) {
   const [alerts, setAlerts] = useState('')
   const user = useContext(ProgramContext);
   const getAlerts = async () => {
@@ -27,11 +27,11 @@ export default function AlertList() {
   }
   useEffect(() => {
     getAlerts();
-  },[])
+  },[props.newAlert])
   console.log(alerts)
   return (
       <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650, width: 1000 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="center">Location</TableCell>
@@ -40,6 +40,13 @@ export default function AlertList() {
               <TableCell align="center">Emails</TableCell>
               <TableCell align="center"></TableCell>
               <TableCell align="center"></TableCell>
+              <TableCell align="center">
+                <Tooltip title="Add Alert">
+                  <IconButton onClick={()=> props.setnewalert(!props.newalert)}>
+                    <NotificationAddIcon/>
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -72,7 +79,12 @@ export default function AlertList() {
             // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             align="center"
             >
-              You have no alerts
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center">You have no alerts setup</TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
             </TableRow>
             }
           </TableBody>

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  TextField,
-  Grid,
   Box,
-  Typography,
-  Button
+  Button,
 } from '@mui/material';
 import axios from 'axios'
-import { Autocomplete } from '@react-google-maps/api';
+import Quickresults from './Quickresults'
+import AddressAutoComplete from './reusableComponents/AddressAutoComplete';
 
-export default function QuickSearch() {
+export default function QuickSearch() { 
+  const [location, setlocation] = useState(null);
+
   const defaultInformation = {
     weatherInfo: {
       barometer: "",
@@ -24,19 +24,18 @@ export default function QuickSearch() {
       shadedWBGT: ''
     }
   }
-  const [address, setaddress] = useState('')
   const [coords, setcoords] = useState({})
   const [information, setInformation] = useState(defaultInformation)
   const handleSubmit = async (e) => {
     e.preventDefault()
-    let refinedAddress = address.replace(' ', '+')
+    console.log(location)
+    let refinedAddress = location.description.replace(' ', '+')
     let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`)
-    console.log(latLonSearch)
     let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2)
     let trimmedLon = parseFloat(latLonSearch.data[0].lon).toFixed(2)
 
     try{
-      let wgbtData = await axios.get(`http://localhost:3001/scraper?lat=${trimmedLat}&lon=${trimmedLon}`)
+      let wgbtData = await axios.get(`http://localhost:3001/quickSearch?lat=${trimmedLat}&lon=${trimmedLon}`)
       console.log(wgbtData)
       setcoords({
         lat: trimmedLat,
@@ -49,78 +48,13 @@ export default function QuickSearch() {
     }
   }
 
-  const handleChange = (e) => {
-    setaddress(e.target.value)
-  }
-
-  useEffect(() => {
-
-  },[information])
-
   return (
-    <>
     <Box>
-      <Typography>Quick Search</Typography>
-        <Grid>
-          <form onSubmit={handleSubmit}>
-          {/* <Autocomplete>
-            <TextField
-              placeholder="Address"
-              value={address}
-              onChange={handleChange}
-            />
-          </Autocomplete> */}
-          <TextField
-            placeholder="Address"
-            value={address}
-            onChange={handleChange}
-          />
-          <Button type="submit" variant='contained'>Submit</Button>
-          </form>
-        </Grid>
+      <form onSubmit={handleSubmit}>
+        <AddressAutoComplete setlocation={setlocation}/>
+        <Button type="submit" variant='contained'>Submit</Button>
+      </form>
+        <Quickresults information={information}/>
     </Box>
-    <Box>
-      <Typography>WGBT</Typography>
-        <Grid>
-          <TextField
-            value={`${information.wgbtInfo.directWBGT} \u00B0F`}
-            label={'Direct WGBT'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.shadedWBGT} \u00B0F`}
-            label={'Shaded WGBT'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.heatIndex} \u00B0F`}
-            label={'Heat Index'}
-          />
-          <TextField
-            value={`${information.wgbtInfo.solarRadiance} W/m^2`}
-            label={'Estimated Solar Radiance'}
-          />
-        </Grid>
-    </Box>
-    <Box>
-      <Typography>Weather Information</Typography>
-        <Grid>
-          <TextField
-            value={`${information.weatherInfo.barometer} in/Hg`}
-            label={'Barometer'}
-          />
-          <TextField
-            value={`${information.weatherInfo.humidity}%`}
-            label={'Humidity'}
-          />
-          <TextField
-            value={`${information.weatherInfo.temperature} \u00B0F`}
-            label={'Dry Temp'}
-          />
-          <TextField
-            value={`${information.weatherInfo.windspeed} MPH`}
-            label={'Wind Speed'}
-          />
-        </Grid>
-    </Box>
-  </>
   )
 }

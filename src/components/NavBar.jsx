@@ -21,7 +21,6 @@ export default function NavBar(props){
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated, loginWithRedirect } = useAuth0();
   const user = useContext(ProgramContext);
-  console.log(user)
 	const handleLogin = () => {
 		loginWithRedirect();
 	};

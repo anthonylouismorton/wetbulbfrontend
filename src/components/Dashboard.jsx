@@ -8,14 +8,15 @@ export default function Dashboard() {
   const [newalert, setnewalert] = useState(false)
   return (
     <>
-    {newalert === false &&
-    <Button variant="contained" onClick={()=> setnewalert(!newalert)}>New Alert</Button>
-    }
     {newalert &&
     <NewAlertForm setnewalert={setnewalert}/>
     }
-    <AlertList/>
+    {newalert === false &&
+    <>
+    <AlertList newalert={newalert} setnewalert={setnewalert}/>
     <AlertHistory/>
+    </>
+    }
     </>
   )
 }
