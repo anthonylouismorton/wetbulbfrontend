@@ -9,10 +9,26 @@ import {
 export default function Quickresults(props) {
   
   return (
-    <>
-    <Box>
+    <Grid
+    item
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: '100px',
+      flexDirection: 'column',
+      rowGap: '20px'
+    }}
+    > 
       <Typography>WGBT</Typography>
-        <Grid>
+      <Grid
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          marginTop: '20px',
+          columnGap: '10px'
+        }}
+      >
           <TextField
             value={`${props.information.wgbtInfo.directWBGT}`}
             label={'Direct WGBT (\u00B0F)'}
@@ -30,10 +46,15 @@ export default function Quickresults(props) {
             label={'Estimated Solar Radiance (W/m)'}
           />
         </Grid>
-      </Box>
-      <Box>
       <Typography>Weather Information</Typography>
-        <Grid>
+        <Grid
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: '20px',
+            columnGap: '10px'
+          }}
+        >
           <TextField
             value={`${props.information.weatherInfo.barometer}`}
             label={'Barometer (in/Hg)'}
@@ -50,8 +71,11 @@ export default function Quickresults(props) {
             value={`${props.information.weatherInfo.windspeed}`}
             label={'Wind Speed (MPH)'}
           />
+          <TextField
+            value={`${props.information.dateTimeInfo.time}`}
+            label={'Weather Time Stamp'}
+          />
         </Grid>
-      </Box>
-    </>
+    </Grid>
   )
 }

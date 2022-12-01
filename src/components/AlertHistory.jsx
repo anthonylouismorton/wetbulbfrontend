@@ -2,10 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios'
 import { ProgramContext } from '../context/program';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function AlertHistory() {
   const user = useContext(ProgramContext);
-  const [wbgts, setwbgts] = useState([])
+  const [wbgts, setwbgts] = useState([]);
+  const { isAuthenticated } = useAuth0();
   const columns = [
     { field: 'id', headerName: 'Alert ID', width: 70 },
     { field: 'location', headerName: 'Location', width: 200 },
@@ -17,7 +19,8 @@ export default function AlertHistory() {
   ];
 
   const getAllAlerts = async () => {
-    const getWbgts = await axios.get(`${process.env.REACT_APP_DATABASE}/userwgbts/${parseInt(user.userProfile.userId)}`);
+    console.log(user.userProfile.userId)
+    const getWbgts = await axios.get(`${process.env.REACT_APP_DATABASE}/userwbgts/${user.userProfile.userId}`);
     if(getWbgts.data.length > 1){
       const wbgtList = getWbgts.data.map((wbgt) => {
         console.log(wbgt)
@@ -40,7 +43,7 @@ export default function AlertHistory() {
         console.log(wbgt.wbgtId)
         return {
           id: parseInt(wbgt.wbgtId),
-          location: wbgt.lat +' '+ wbgt.lon,
+          location: wbgt.alert.location,
           flagCondition: flag,
           directWBGT: wbgt.directWBGT,
           shadedWBGT: wbgt.shadedWBGT,
@@ -51,7 +54,6 @@ export default function AlertHistory() {
   
         }
       })
-      console.log(wbgtList)
       setwbgts(wbgtList)
     }
   }
@@ -60,6 +62,7 @@ export default function AlertHistory() {
     getAllAlerts()
   },[])
   console.log(wbgts)
+  console.log(user)
   return (
     <div style={{ height: 400, width: '1000px' }}>
     <DataGrid

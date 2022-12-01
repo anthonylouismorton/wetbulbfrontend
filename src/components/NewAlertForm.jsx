@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   TextField,
   Grid,
   Box,
   Typography,
   Button,
-  Checkbox,
-  FormGroup,
   FormControlLabel,
   Radio,
   FormLabel,
-  FormControl,
   RadioGroup,
-  Tooltip,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { ProgramContext } from '../context/program';
 import axios from 'axios'
-// import { Autocomplete } from '@react-google-maps/api';
+import AddressAutoComplete from './reusableComponents/AddressAutoComplete';
 
 export default function NewAlertForm(props) {
   const user = useContext(ProgramContext);
   const [radio, setRadio] = useState('all');
+  const [location, setlocation] = useState('');
   const [frequency, setfrequency] = useState('hourly');
   const defaultAlert = {
     address: '',
@@ -86,21 +84,22 @@ export default function NewAlertForm(props) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    let refinedAddress = alert.address.replace(' ', '+')
-    let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`)
-    let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2)
-    let trimmedLon = parseFloat(latLonSearch.data[0].lon).toFixed(2)
+    e.preventDefault();
+    console.log(location);
+    let refinedAddress = location.description.replace(' ', '+');
+    let latLonSearch = await axios.get(`https://geocode.maps.co/search?q=${refinedAddress}`);
+    let trimmedLat = parseFloat(latLonSearch.data[0].lat).toFixed(2);
+    let trimmedLon = parseFloat(latLonSearch.data[0].lon).toFixed(2);
     let newAlert = {
       lat: trimmedLat,
       lon: trimmedLon,
-      location: alert.address,
+      location: location.description,
       flagCondition: alert.flag,
       frequency: alert.frequency,
       userId: parseInt(user.userProfile.userId)
-    }
+    };
     let createdAlert = await axios.post(`${process.env.REACT_APP_DATABASE}/alert/${parseInt(user.userId)}`, newAlert);
-    let alertId = parseInt(createdAlert.data.alertId)
+    let alertId = parseInt(createdAlert.data.alertId);
     await Promise.all(alert.emails.map(email => axios.post(`${process.env.REACT_APP_DATABASE}/alertEmail/${alertId}`, {alertId: alertId, alertEmail: email})));
     props.setnewalert(false);
   };
@@ -111,13 +110,14 @@ export default function NewAlertForm(props) {
         <Grid>
           <form onSubmit={handleSubmit}>
             <Grid>
-              <TextField
+              {/* <TextField
                 label="Location"
                 placeholder="Enter Location you want a WGBT alert for"
                 name="address"
-                value={alert.address}
+                value={location}
                 onChange={handleChange}
-              />
+              /> */}
+              <AddressAutoComplete setlocation={setlocation}/>
               <FormLabel component="legend">Choose Flag Condition for Alerts</FormLabel>
                 <RadioGroup aria-label="Flag" name="flag" value={radio} onChange={handleChange}>
                   <FormControlLabel value="all" control={<Radio />} label="All Temps" />

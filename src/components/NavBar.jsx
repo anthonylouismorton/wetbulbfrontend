@@ -20,7 +20,7 @@ export default function NavBar(props){
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated, loginWithRedirect } = useAuth0();
-  const user = useContext(ProgramContext);
+  // const user = useContext(ProgramContext);
 	const handleLogin = () => {
 		loginWithRedirect();
 	};
@@ -102,11 +102,6 @@ export default function NavBar(props){
                   <Typography textAlign="center">Quick Search</Typography>
                 </Link>
               </MenuItem>
-              <MenuItem key={'About'} onClick={()=> handleCloseNavMenu('Vents')}>
-                <Link to = '/Vents' style={{ textDecoration: 'none' }}>
-                  <Typography textAlign="center">About</Typography>
-                </Link>
-              </MenuItem>
               {isAuthenticated &&
               <MenuItem key={'Dashboard'} onClick={()=> handleCloseNavMenu('Dashboard')}>
                 <Link to = '/Dashboard' style={{ textDecoration: 'none' }}>
@@ -114,6 +109,11 @@ export default function NavBar(props){
                 </Link>
               </MenuItem>
               }
+              <MenuItem key={'About'} onClick={()=> handleCloseNavMenu('Vents')}>
+                <Link to = '/Vents' style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">About</Typography>
+                </Link>
+              </MenuItem>
             </Menu>
           </Box>
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
@@ -144,14 +144,6 @@ export default function NavBar(props){
               Quick Search
             </Button>
           </Link>
-          <Link to = '/About' style={{ textDecoration: 'none' }}>
-            <Button
-              key={'About'}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              About
-            </Button>
-          </Link>
             {isAuthenticated &&
             <Link to = '/Dashboard' style={{ textDecoration: 'none' }}>
               <Button
@@ -162,6 +154,14 @@ export default function NavBar(props){
               </Button>
             </Link>
             }
+          <Link to = '/About' style={{ textDecoration: 'none' }}>
+            <Button
+              key={'About'}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              About
+            </Button>
+          </Link>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="My Account">
