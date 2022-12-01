@@ -10,9 +10,7 @@ function UserProvider({children}){
   const getUserProfile = async () => {
     if(isAuthenticated){
       let email = user.email
-      console.log(email)
       const userinfo = await axios.get(`${process.env.REACT_APP_DATABASE}/user/${email}`);
-      console.log(email)
       setUserProfile(userinfo.data)
     }
     else{
@@ -26,7 +24,6 @@ function UserProvider({children}){
   let values = {
     userProfile
   }
-
   return (
     <ProgramContext.Provider value={values}>
       {children}

@@ -15,10 +15,12 @@ import { ProgramContext } from '../context/program';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function AlertList(props) {
-  const [alerts, setAlerts] = useState('')
+  const [alerts, setAlerts] = useState('');
   const user = useContext(ProgramContext);
+  const { isAuthenticated } = useAuth0();
   const getAlerts = async () => {
     if(user.userProfile.userId){
       const userAlerts = await axios.get(`${process.env.REACT_APP_DATABASE}/alerts/${parseInt(user.userProfile.userId)}`);
@@ -27,8 +29,7 @@ export default function AlertList(props) {
   }
   useEffect(() => {
     getAlerts();
-  },[props.newAlert])
-  console.log(alerts)
+  },[props.newAlert, isAuthenticated])
   return (
       <TableContainer>
         <Table sx={{ minWidth: 650, width: 1000 }} aria-label="simple table">
@@ -55,7 +56,7 @@ export default function AlertList(props) {
                 key={row.alert.alertId}
                 // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell align="center">{row.alert.lat} {row.alert.lon}</TableCell>
+                <TableCell align="center">{row.alert.location}</TableCell>
                 <TableCell align="center">{row.alert.flagCondition}</TableCell>
                 <TableCell align="center">{row.alert.frequency}</TableCell>
                 <TableCell align="center">{row.emails.map(email => email.alertEmail).join(', ')}</TableCell>
