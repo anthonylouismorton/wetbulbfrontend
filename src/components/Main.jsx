@@ -2,15 +2,17 @@ import React from "react";
 import Quicksearch from "./Quicksearch";
 import Dashboard from "./Dashboard";
 import { Routes, Route } from 'react-router-dom';
-import { Grid
- } from '@mui/material'
 
-export default function Main() {
 
+export default function Main(props) {
   return (
       <Routes>
         <Route
           path='/'
+          element={<Quicksearch/>}
+        />
+        <Route
+          path='/Home'
           element={<Quicksearch/>}
         />
         <Route
@@ -19,7 +21,7 @@ export default function Main() {
         />
         <Route
           path='/Dashboard'
-          element={<Dashboard/>}
+          element={<Dashboard user={props.user}/>}
         />
       </Routes>
   )

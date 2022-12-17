@@ -15,9 +15,9 @@ export default function Quickresults(props) {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: '100px',
+      marginTop: '50px',
       flexDirection: 'column',
-      rowGap: '20px'
+      rowGap: '10px'
     }}
     > 
       <Typography>WGBT</Typography>
@@ -25,8 +25,8 @@ export default function Quickresults(props) {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          marginTop: '20px',
-          columnGap: '10px'
+          columnGap: '10px',
+          marginBottom: '20px'
         }}
       >
           <TextField
@@ -46,15 +46,15 @@ export default function Quickresults(props) {
             label={'Estimated Solar Radiance (W/m)'}
           />
         </Grid>
-      <Typography>Weather Information</Typography>
+        <Typography>Weather Information</Typography>
         <Grid
           sx={{
             display: 'flex',
             alignItems: 'center',
-            marginTop: '20px',
+            marginTop: '10px',
             columnGap: '10px'
           }}
-        >
+          >
           <TextField
             value={`${props.information.weatherInfo.barometer}`}
             label={'Barometer (in/Hg)'}

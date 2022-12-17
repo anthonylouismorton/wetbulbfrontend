@@ -7,7 +7,10 @@ import {
   TableCell,
   TableBody,
   Tooltip,
-  IconButton
+  IconButton,
+  Typography,
+  Grid,
+  Paper
 } from '@mui/material';
 
 import axios from 'axios'
@@ -18,78 +21,90 @@ import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import { useAuth0 } from '@auth0/auth0-react';
 
 export default function AlertList(props) {
-  const [alerts, setAlerts] = useState('');
-  const user = useContext(ProgramContext);
-  const { isAuthenticated } = useAuth0();
+  const [alerts, setAlerts] = useState([]);
+  console.log(props.user)
+  const userProfile = useContext(ProgramContext);
+  const { isAuthenticated, user } = useAuth0();
   const getAlerts = async () => {
-    if(user.userProfile.userId){
-      const userAlerts = await axios.get(`${process.env.REACT_APP_DATABASE}/alerts/${parseInt(user.userProfile.userId)}`);
+    console.log('in the get alerts')
+    console.log(props.user)
+    if(props.user){
+      console.log('in the if')
+      const userAlerts = await axios.get(`${process.env.REACT_APP_DATABASE}/alerts/${props.user.email}`);
+      console.log(userAlerts)
       setAlerts(userAlerts.data)
     }
   }
   useEffect(() => {
+    console.log('in the use effect')
     getAlerts();
-  },[props.newAlert, isAuthenticated])
+  },[props.user])
   return (
-      <TableContainer>
-        <Table sx={{ minWidth: 650, width: 1000 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">Location</TableCell>
-              <TableCell align="center">Flag Condition</TableCell>
-              <TableCell align="center">Frequency</TableCell>
-              <TableCell align="center">Emails</TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center">
-                <Tooltip title="Add Alert">
-                  <IconButton onClick={()=> props.setnewalert(!props.newalert)}>
-                    <NotificationAddIcon/>
-                  </IconButton>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {alerts !=='' ? alerts.map((row) => (
-              <TableRow
-                key={row.alert.alertId}
-                // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell align="center">{row.alert.location}</TableCell>
-                <TableCell align="center">{row.alert.flagCondition}</TableCell>
-                <TableCell align="center">{row.alert.frequency}</TableCell>
-                <TableCell align="center">{row.emails.map(email => email.alertEmail).join(', ')}</TableCell>
+    <Grid item
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <Typography>Alerts</Typography>
+      <Grid item>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650, width: 750 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Location</TableCell>
+                <TableCell align="center">Flag</TableCell>
+                <TableCell align="center">Frequency</TableCell>
                 <TableCell align="center">
-                  <Tooltip title="Remove Alert">
-                    <IconButton>
-                      <DeleteIcon/>
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-                <TableCell align="center">
-                  <Tooltip title="Edit Alert">
-                    <IconButton>
-                      <EditIcon/>
+                  <Tooltip title="Add Alert">
+                    <IconButton onClick={()=> props.setnewalert(!props.newalert)}>
+                      <NotificationAddIcon/>
                     </IconButton>
                   </Tooltip>
                 </TableCell>
               </TableRow>
-            )):
-            <TableRow
-            // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            align="center"
-            >
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center">You have no alerts setup</TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-            </TableRow>
-            }
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {alerts.length > 0 ? alerts.map((row) => (
+                <TableRow
+                  key={row.alert.alertId}
+                  // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell align="center">{row.alert.location}</TableCell>
+                  <TableCell align="center">{row.alert.flagCondition}</TableCell>
+                  <TableCell align="center">{row.alert.frequency}</TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Remove Alert">
+                      <IconButton>
+                        <DeleteIcon/>
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Edit Alert">
+                      <IconButton>
+                        <EditIcon/>
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              )):
+              <TableRow
+              // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              align="center"
+              >
+                <TableCell align="center"></TableCell>
+                <TableCell align="center"></TableCell>
+                <TableCell align="center">You have no alerts setup</TableCell>
+                <TableCell align="center"></TableCell>
+              </TableRow>
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+    </Grid>
   );
 }

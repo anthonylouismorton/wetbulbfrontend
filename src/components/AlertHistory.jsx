@@ -3,6 +3,11 @@ import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios'
 import { ProgramContext } from '../context/program';
 import { useAuth0 } from '@auth0/auth0-react';
+import { 
+  Typography,
+  Grid
+} 
+from '@mui/material';
 
 export default function AlertHistory() {
   const user = useContext(ProgramContext);
@@ -19,7 +24,6 @@ export default function AlertHistory() {
   ];
 
   const getAllAlerts = async () => {
-    console.log(user.userProfile.userId)
     const getWbgts = await axios.get(`${process.env.REACT_APP_DATABASE}/userwbgts/${user.userProfile.userId}`);
     if(getWbgts.data.length > 1){
       const wbgtList = getWbgts.data.map((wbgt) => {
@@ -58,19 +62,35 @@ export default function AlertHistory() {
     }
   }
 
-  useEffect(() => {
-    getAllAlerts()
-  },[])
-  console.log(wbgts)
-  console.log(user)
+  // useEffect(() => {
+  //   getAllAlerts()
+  // },[isAuthenticated])
   return (
-    <div style={{ height: 400, width: '1000px' }}>
+    <Grid
+      item
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        columnGap: '10px',
+        marginBottom: '20px',
+        flexDirection: 'column'
+      }}
+    >
+    <Typography>Alert History</Typography>
+    <Grid 
+      sx={{ 
+      height: 400, 
+      width: '750px',
+      alignItems: 'center',
+      justifyContent: 'center',
+      }}>
     <DataGrid
       rows={wbgts}
       columns={columns}
       pageSize={5}
       rowsPerPageOptions={[5]}
     />
-  </div>
+    </Grid>
+  </Grid>
   );
 }

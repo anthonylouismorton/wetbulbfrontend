@@ -13,17 +13,20 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
-import { ProgramContext } from '../context/program';
+import { LoginButton } from './LoginButton';
 const settings = ['Login','Logout'];
 
 export default function NavBar(props){
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated, loginWithRedirect } = useAuth0();
-  // const user = useContext(ProgramContext);
-	const handleLogin = () => {
-		loginWithRedirect();
-	};
+  const handleLogin = async () => {
+    await loginWithRedirect({
+      appState: {
+        returnTo: "/Dashboard",
+      },
+    });
+  };
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -44,7 +47,6 @@ export default function NavBar(props){
       logout({ returnTo: window.location.origin })
     }
   }
-
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
