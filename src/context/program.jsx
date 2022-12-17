@@ -7,9 +7,12 @@ function UserProvider({children}){
   const [userProfile, setUserProfile] = useState({});
   const { user, isAuthenticated } = useAuth0();
 
+
   const getUserProfile = async () => {
+    console.log(isAuthenticated)
     if(isAuthenticated){
       let email = user.email
+      console.log(email)
       const userinfo = await axios.get(`${process.env.REACT_APP_DATABASE}/user/${email}`);
       setUserProfile(userinfo.data)
     }
@@ -18,12 +21,14 @@ function UserProvider({children}){
     }
   }
   useEffect(() => {
+    console.log('in the use effect')
     getUserProfile();
-  }, [isAuthenticated]);
+  }, []);
 
   let values = {
     userProfile
   }
+  console.log(values)
   return (
     <ProgramContext.Provider value={values}>
       {children}

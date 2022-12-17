@@ -17,9 +17,11 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { ProgramContext } from '../context/program';
 import axios from 'axios'
 import AddressAutoComplete from './reusableComponents/AddressAutoComplete';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function NewAlertForm(props) {
-  const user = useContext(ProgramContext);
+  // const user = useContext(ProgramContext);
+  const { isAuthenticated, user } = useAuth0();
   const [radio, setRadio] = useState('all');
   const [location, setlocation] = useState('');
   const [frequency, setfrequency] = useState('hourly');
@@ -96,9 +98,9 @@ export default function NewAlertForm(props) {
       location: location.description,
       flagCondition: alert.flag,
       frequency: alert.frequency,
-      userId: parseInt(user.userProfile.userId)
+      alertEmail: user.email
     };
-    let createdAlert = await axios.post(`${process.env.REACT_APP_DATABASE}/alert/${parseInt(user.userId)}`, newAlert);
+    let createdAlert = await axios.post(`${process.env.REACT_APP_DATABASE}/alert/`, newAlert);
     let alertId = parseInt(createdAlert.data.alertId);
     await Promise.all(alert.emails.map(email => axios.post(`${process.env.REACT_APP_DATABASE}/alertEmail/${alertId}`, {alertId: alertId, alertEmail: email})));
     props.setnewalert(false);
@@ -110,13 +112,6 @@ export default function NewAlertForm(props) {
         <Grid>
           <form onSubmit={handleSubmit}>
             <Grid>
-              {/* <TextField
-                label="Location"
-                placeholder="Enter Location you want a WGBT alert for"
-                name="address"
-                value={location}
-                onChange={handleChange}
-              /> */}
               <AddressAutoComplete setlocation={setlocation}/>
               <FormLabel component="legend">Choose Flag Condition for Alerts</FormLabel>
                 <RadioGroup aria-label="Flag" name="flag" value={radio} onChange={handleChange}>
